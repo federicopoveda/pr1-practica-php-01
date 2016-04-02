@@ -114,16 +114,40 @@ class UserController {
      */
     public function register($request) {
         $result = [];
+        $formData = $request->getParsedBody();
+        $fullName = null;
+        $email = null;
+        $password = null;
+        $repeatPassword = null;
 
-        /**
-         * TODO: Implementar
-         * Pasos
-         * - Tome los datos del formulario, similar al método de login.
-         * - Verifique que todos los datos existan.
-         * - Si efectivamente existen, llame al método `register` del lado del servicio.
-         * - Comunique de vuelta al Front-End el resultado de la operación con un array que tenga la misma estructura
-         * al que se usó en el método `login`.
-         */
+//        LOG
+//        error_log(print_r($formData, true), 3, "error.log");
+
+        if (array_key_exists("full-name", $formData)) {
+            $fullName = $formData["full-name"];
+        } else {
+            $result["message"] = "Full name is required";
+        }
+
+        if (array_key_exists("email", $formData)) {
+            $email = $formData["email"];
+        }
+
+        if (array_key_exists("password", $formData)) {
+            $password = $formData["password"];
+        }
+
+        if (array_key_exists("repeat-password", $formData)) {
+            $repeatPassword = $formData["repeat-password"];
+        }
+
+        $registerResult = $this->userService->register($email, $password, $repeatPassword, $fullName);
+
+        if (array_key_exists("error", $registerResult)) {
+            $result["error"] = true;
+        }
+
+        $result["message"] = $registerResult["message"];
 
         return $result;
     }

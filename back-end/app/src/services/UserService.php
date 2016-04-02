@@ -107,18 +107,128 @@ class UserService {
     public function register($email, $password, $passwordConfirm, $fullName) {
         $result = [];
 
-        /**
-         * TODO: Implementar
-         * Pasos
-         * - Verifique la existencia y validez de todos los datos, que todos existan y tengan el formato correcto,
-         * use como guía el método `login`.
-         * - Verifique que las contraseñas coincidan.
-         * - Verifique que el email no ha sido usado en el sistema.
-         * - Si todo lo anterior fue verificado existosamente, cree un nuevo usuario en el sistema y comuníquele a
-         * quién consumió el servicio el resultado de la operación en forma de un array similar al del método `login`.
-         */
+        // Verificamos que efectivamente vengan todos los datos
+        if (isset($email, $password, $passwordConfirm, $fullName)) {
+            $email = trim($email);
+            $password = trim($password);
+            $passwordConfirm = trim($passwordConfirm);
+            $fullName = trim($fullName);
+
+            // Si nuestro correo es válido
+            if ($this->isValidEmail($email)) {
+                // Si `password` es un string válido
+                if ($this->isValidString($password)) {
+                    // Si `$passwordConfirm` es un string válido
+                    if ($this->isValidString($passwordConfirm)) {
+                        // Si `$fullName` es un string válido
+                        if ($this->isValidString($fullName)) {
+                            // Si tanto `$password` como `$passwordConfirm` coinciden
+                            if ($password == $passwordConfirm) {
+
+                                // Si el email no ha sido usado
+                                if ($this->isEmailAvailable($email)) {
+                                    $query = "INSERT INTO usuarios (email, password, full_name) VALUES (:email, :password, :nombre)";
+
+                                    // Los parámetros de ese query
+                                    $params = [":email" => $email, ":password" => $password, ":nombre" => $fullName];
+
+                                    // Lo ejecutamos
+                                    $createAccountResult = $this->storage->insertQuery($query, $params);
+
+//                                    LOG
+//                                    error_log(print_r($createAccountResult, true), 3, "error.log");
+
+                                    if ($createAccountResult["data"]["count"] == 1) {
+                                        $result["message"] = "yay!";
+                                    } else {
+                                        $result["error"] = true;
+                                        $result["message"] = "Something is up";
+                                    }
+                                } else {
+                                    $result["error"] = true;
+                                    $result["message"] = "Email is unavailable";
+                                }
+                            } else {
+                                $result["error"] = true;
+                                $result["message"] = "Passwords don't match";
+                            }
+                        } else {
+                            $result["error"] = true;
+                            $result["message"] = "Full name is invalid";
+                        }
+                    } else {
+                        $result["error"] = true;
+                        $result["message"] = "Password confirm is invalid";
+                    }
+                } else {
+                    $result["error"] = true;
+                    $result["message"] = "Password is invalid";
+                }
+            } else {
+                $result["error"] = true;
+                $result["message"] = "Email is invalid";
+            }
+        } else {
+            $result["error"] = true;
+            $result["message"] = "All fields are required";
+        }
 
         return $result;
+    }
+
+    /**
+     * Verifica si una cadena de texto puede ser considerada texto válido.
+     *
+     * @param string $stringToCheck
+     * @return bool
+     */
+    private function isValidString($stringToCheck) {
+        if (isset($stringToCheck)) {
+            $trimmed = trim($stringToCheck);
+
+            if (strlen($trimmed) > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Verifica si un stringToCheck es un email válido.
+     *
+     * @param stringToCheck $email
+     * @return bool
+     */
+    private function isValidEmail($email) {
+        return $this->isValidString($email) ? filter_var($email, FILTER_VALIDATE_EMAIL) : false;
+    }
+
+    /**
+     * Verifica si un email está disponible para ser utilizado en el sistema.
+     *
+     * @param string $email
+     * @return bool
+     */
+    private function isEmailAvailable($email) {
+        // El query que vamos a ejecutar en la BD
+        $query = "SELECT COUNT(*) AS count FROM usuarios WHERE email = :email";
+
+        // Los parámetros de ese query
+        $params = [":email" => $email];
+
+        // Lo ejecutamos
+        $result = $this->storage->query($query, $params);
+
+//        LOG
+//        error_log(print_r($result, true), 3, "error.log");
+
+        // El resultado esperado de la cuenta es cero
+        return $result["data"][0]["count"] == 0;
+    }
+    
+    private function encryptPassword($password) {
+        
     }
 
 }
