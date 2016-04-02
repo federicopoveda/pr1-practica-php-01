@@ -182,7 +182,8 @@ class UserService {
         // El resultado esperado de la cuenta es cero
         return $result["data"][0]["count"] == 0;
     }
-    
+
+    // TODO: Encriptar el password
     private function encryptPassword($password) {
         
     }

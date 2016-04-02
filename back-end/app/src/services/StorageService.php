@@ -16,6 +16,7 @@ class StorageService {
     private $pdo;
 
     public function __construct() {
+        // TODO: Permitir que esta información sea distinta por ambiente.
         $config = [
             "db_host" => "127.0.0.1",
             "db_name" => "pr1db",
