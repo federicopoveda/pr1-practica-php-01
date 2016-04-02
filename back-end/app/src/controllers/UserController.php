@@ -54,30 +54,21 @@ class UserController {
             $password = $formData["password"];
         }
 
-        /**
-         * Si tanto email y password están definidos, mandamos a llamar al método de login del servicio.
-         * Tenga en cuenta que el controlador solo pasa datos de un lado a otro, al servicio en PHP le toca revisar
-         * la validez de esos datos.
-         */
-        if (isset($email, $password)) {
-            $loginResult = $this->userService->login($email, $password);
+        $loginResult = $this->userService->login($email, $password);
 
-            if (array_key_exists("error", $loginResult)) {
-                $result["error"] = true;
-            } else {
-                /**
-                 * Si el usuario inició sesión, creamos un cookie llamado `loggedIn` y le asignamos el valor de true.
-                 * Este cookie se debe expirar en caso de cerrar sesión.
-                 * http://php.net/manual/en/function.setcookie.php
-                 */
-                setcookie($this->nombreCookie, true, time()+3600);
-            }
-
-            $result["message"] = $loginResult["message"];
-        } else {
+        if (array_key_exists("error", $loginResult)) {
             $result["error"] = true;
-            $result["message"] = "Email and password can not be empty.";
+        } else {
+            /**
+             * Si el usuario inició sesión, creamos un cookie llamado `loggedIn` y le asignamos el valor de true.
+             * Este cookie se debe expirar en caso de cerrar sesión.
+             * http://php.net/manual/en/function.setcookie.php
+             */
+            setcookie($this->nombreCookie, true, time()+3600);
+            $result["user"] = $loginResult["user"];
         }
+
+        $result["message"] = $loginResult["message"];
 
         // El array creado en ese método se envía como de vuelta al enrutador.
         return $result;
