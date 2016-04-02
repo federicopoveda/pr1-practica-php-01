@@ -16,17 +16,11 @@ class StorageService {
     private $pdo;
 
     public function __construct() {
-        /**
-         * TODO: Arreglar
-         * Una vez creada su base de datos:
-         * - Ingrese los datos correctos en ese diccionario.
-         * - Cambie el valor de la variable `$isDBReady` en el `UserService`.
-         */
         $config = [
-            'db_host' => 'hostname_para_la_base_de_datos',
-            'db_name' => 'nombre_de_la_base_de_datos',
-            'db_user' => 'usuario_de_la_base_de_datos',
-            'db_pass' => 'password_del_usuario_de_la_base_de_datos'
+            'db_host' => '127.0.0.1',
+            'db_name' => 'pr1db',
+            'db_user' => 'pr1usuario',
+            'db_pass' => 'pr1password'
         ];
 
         // Creamos una nueva conexión.

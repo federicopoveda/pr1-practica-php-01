@@ -9,7 +9,7 @@ namespace App\Services;
 class UserService {
 
     private $storage;
-    private $isDBReady = false;
+    private $isDBReady = true;
 
     /**
      * UserService constructor.
