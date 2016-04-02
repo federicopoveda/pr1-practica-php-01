@@ -84,14 +84,16 @@ class UserController {
     public function logout($request) {
         $result = [];
 
-        /**
-         * TODO: Implementar
-         * Pasos
-         * - Elimine cualquier cookie que se pudo haber creado en el back-end al iniciar sesión. Recuerde que para
-         * eliminar cookies, se debe poner una fecha de expiración en el pasado.
-         * Importante, este método no tiene llamada al servicio en PHP porque de momento no existe ninguna operación
-         * en el servicio que lo requiera. Esto podría cambiar en su aplicación.
-         */
+        // Verificamos si el usuario tenía un cookie en primer lugar
+        if (array_key_exists($this->nombreCookie, $_COOKIE)) {
+            $result["message"] = "User was logged out";
+            // Si lo tenía, lo expiramos
+            setcookie($this->nombreCookie, true, time()-10);
+        } else {
+            // Si no, retornamos un error, el usuario accedió al logout sin iniciar sesión
+            $result["error"] = true;
+            $result["message"] = "User never logged in";
+        }
 
         return $result;
     }
