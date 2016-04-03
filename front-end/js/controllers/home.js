@@ -5,7 +5,7 @@ angular.module('practicaPHP01.controllers')
     .controller('HomeController', ['$scope', 'UserService', '$location',
         function ($scope, UserService, $location) {
             $scope.init = function() {
-                console.debug('Home');
+                // console.debug('Home');
 
                 $scope.error = null;
                 $scope.user = null;

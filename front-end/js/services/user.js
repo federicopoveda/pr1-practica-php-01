@@ -34,27 +34,11 @@ angular.module('practicaPHP01.services')
          *
          * @returns {boolean}
          */
-        var logout = function logout() {
-            var result = {
-                success: false,
-                message: null
-            };
-
-            /**
-             * TODO: Implementar
-             * Pasos
-             * - Elimine la información del usuario de `ClientStorage`.
-             * - Llame al back-end para que cerrar la sesión en el back-end (URL: `/back-end/user/logout`).
-             * - Verifique que se eliminaron los datos correctamente.
-             * - Maneje los siguientes escenarios:
-             *  - No existían datos.
-             *  - Los datos fueron correctamente eliminados.
-             *  - Los datos
-             * - En los casos 1 y 2, retorne `true` como valor de esta función.
-             * - Para el caso 3, retorne `false`.
-             */
-
-            return result;
+        var logout = function logout(success, error) {
+            return $http.get('back-end/user/logout').then(function(response) {
+                ClientStorage.erase(UserKey);
+                success(response);
+            }, error);
         };
 
         /**

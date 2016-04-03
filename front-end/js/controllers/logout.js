@@ -1,21 +1,30 @@
 angular.module('practicaPHP01.controllers')
     /**
-     * Inicia la sesión del usuario en el sistema.
+     * Cierra la sesión del usuario en el sistema.
      */
-    .controller('LogoutController', ['$scope', '$location', 'UserService',
-        function ($scope, $location, UserService) {
+    .controller('LogoutController', ['$scope', 'UserService',
+        function ($scope, UserService) {
             $scope.init = function() {
-                console.debug('Logout');
+                // console.debug('Logout');
+                $scope.error = null;
+                $scope.success = null;
 
-                /**
-                 * TODO: Implementar
-                 * Pasos
-                 * - Verifique que el usuario tenga una sesión activa antes de seguir.
-                 * - Maneje los siguientes escenarios:
-                 *  - El usuario tiene una sesión activa.
-                 *  - No tiene una sesión activa, redirija al usuario a la página de inicio de sesión.
-                 * - En el primer caso, utilice el método `logout` del `UserService`.
-                 */
+                logout();
+            };
+
+            var logout = function logout() {
+                if (UserService.isLoggedIn()) {
+                    UserService.logout(function(response) {
+                        // console.debug(response.data);
+                        $scope.success = true;
+                    }, function(response) {
+                        // console.warn(response);
+                        $scope.error = true;
+                    });
+                } else {
+                    // console.warn('User not logged in');
+                    $scope.error = true;
+                }
             };
 
             $scope.init();

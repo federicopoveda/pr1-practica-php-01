@@ -3,9 +3,7 @@
     <h3>Logout</h3>
 </div>
 
-<div ng-if="success">
-    <p class="alert alert-success">You have been logged out.</p>
-    <p>Want to <a ng-href="#/login">login</a> again?</p>
-</div>
-
+<p class="alert alert-success" ng-if="success">You have been logged out.</p>
 <p class="alert alert-danger" ng-if="error">There was an error logging you out.</p>
+
+<p>Want to <a ng-href="#/login">login</a> again?</p>

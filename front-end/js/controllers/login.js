@@ -20,7 +20,7 @@ angular.module('practicaPHP01.controllers')
                     // Si el usuario acaba de registrarse
                     if (UserService.isNewUser()) {
                         $scope.formMessages = 'Bienvenido nuevo usuario';
-                        console.debug('nuevo usuario');
+                        // console.debug('nuevo usuario');
                     }
                 }
             };
