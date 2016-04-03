@@ -39,8 +39,11 @@ class UserService {
                 // El query que vamos a ejecutar en la BD
                 $query = "SELECT id, email, full_name FROM usuarios WHERE email = :email AND password = :password LIMIT 1";
 
+                // Encriptamos el password
+                $encryptedPassword = $this->getProtectedPassword($password);
+
                 // Los parámetros de ese query
-                $params = [":email" => $email, ":password" => $password];
+                $params = [":email" => $email, ":password" => $encryptedPassword];
 
                 // El resultado de de ejecutar la sentencia se almacena en la variable `result`
                 $result = $this->storage->query($query, $params);
@@ -111,10 +114,14 @@ class UserService {
 
                                 // Si el email no ha sido usado
                                 if ($this->isEmailAvailable($email)) {
+
                                     $query = "INSERT INTO usuarios (email, password, full_name) VALUES (:email, :password, :nombre)";
 
+                                    // Encriptamos el password
+                                    $encryptedPassword = $this->getProtectedPassword($password);
+
                                     // Los parámetros de ese query
-                                    $params = [":email" => $email, ":password" => $password, ":nombre" => $fullName];
+                                    $params = [":email" => $email, ":password" => $encryptedPassword, ":nombre" => $fullName];
 
                                     // Lo ejecutamos
                                     $createAccountResult = $this->storage->query($query, $params);
@@ -183,9 +190,22 @@ class UserService {
         return $result["data"][0]["count"] == 0;
     }
 
-    // TODO: Encriptar el password
-    private function encryptPassword($password) {
-        
+    /**
+     * Enmascara la contraseña brindada para evitar almacenar las contraseñas en texto plano en la base de datos.
+     *
+     * @param $password
+     * @return string
+     */
+    private function getProtectedPassword($password) {
+        /**
+         * Primer intento: duplicar la contraseña.
+         * Entrada: password
+         * Salida: passwordpassword
+         */
+        // Primer intento, copiar el password
+        $finalPassword = $password . $password;
+
+        return $finalPassword;
     }
 
 }
