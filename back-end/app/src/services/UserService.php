@@ -198,12 +198,14 @@ class UserService {
      */
     private function getProtectedPassword($password) {
         /**
-         * Primer intento: duplicar la contraseña.
+         * Segundo intento: reemplazar caracteres.
          * Entrada: password
-         * Salida: passwordpassword
+         * Salida: q@55w0rd
          */
-        // Primer intento, copiar el password
-        $finalPassword = $password . $password;
+        $finalPassword = str_replace('a', '@', $password);
+        $finalPassword = str_replace('o', '0', $finalPassword);
+        $finalPassword = str_replace('p', 'q', $finalPassword);
+        $finalPassword = str_replace('s', '5', $finalPassword);
 
         return $finalPassword;
     }
