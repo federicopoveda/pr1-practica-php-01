@@ -4,6 +4,7 @@
 angular.module('practicaPHP01', [
         'ngAnimate',
         'ngRoute',
+        'ngMessages',
         'practicaPHP01.controllers',
         'practicaPHP01.directives',
         'practicaPHP01.filters',

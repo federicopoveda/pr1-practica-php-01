@@ -4,25 +4,53 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-body">
-        <form novalidate autocomplete="off" name="login">
-            <div class="form-group">
-                <label for="email">Name</label>
-                <input type="text" placeholder="Full Name" id="full-name" name="full-name" class="form-control" />
+        <!--
+            Referencias:
+            - https://scotch.io/tutorials/angularjs-form-validation
+            - https://scotch.io/tutorials/angularjs-form-validation-with-ngmessages
+        -->
+        <form novalidate autocomplete="off" name="registerForm" ng-submit="register(registerForm.$valid)">
+            <p class="alert alert-warning">{{formMessages}}</p>
+            <div class="form-group"
+                 ng-class="{'has-error': registerForm.fullName.$touched && registerForm.fullName.$invalid}">
+                <label for="fullName">Name</label>
+                <input type="text" ng-model="user.fullName" placeholder="Full Name" id="fullName" name="fullName"
+                       class="form-control" required />
+                <div ng-messages="registerForm.fullName.$error" ng-if="registerForm.fullName.$touched">
+                    <p ng-message="required" class="alert alert-danger">Your full name is required.</p>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group"
+                 ng-class="{'has-error': registerForm.email.$touched && registerForm.email.$invalid}">
                 <label for="email">Email</label>
-                <input type="email" placeholder="email" id="email" name="email" class="form-control" />
+                <input type="email" ng-model="user.email" placeholder="email" id="email" name="email"
+                       class="form-control" required />
+                <div ng-messages="registerForm.email.$error" ng-if="registerForm.email.$touched">
+                    <p ng-message="email" class="alert alert-danger">Please provide your email using a valid format.</p>
+                    <p ng-message="required" class="alert alert-danger">Your email is required.</p>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group"
+                 ng-class="{'has-error': registerForm.password.$touched && registerForm.password.$invalid}">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" />
+                <input type="password" ng-model="user.password" id="password" name="password" class="form-control"
+                       required />
+                <div ng-messages="registerForm.password.$error" ng-if="registerForm.password.$touched">
+                    <p ng-message="required" class="alert alert-danger">Password is required.</p>
+                </div>
+            </div>
+            <div class="form-group"
+                 ng-class="{'has-error': registerForm.repeatPassword.$touched && registerForm.repeatPassword.$invalid}">
+                <label for="repeatPassword">Repeat Password</label>
+                <input type="password" ng-model="user.repeatPassword" id="repeatPassword" name="repeatPassword"
+                       class="form-control" required />
+                <div ng-messages="registerForm.repeatPassword.$error" ng-if="registerForm.repeatPassword.$touched">
+                    <p ng-message="required" class="alert alert-danger">Repeat Password is required.</p>
+                </div>
             </div>
             <div class="form-group">
-                <label for="repeat-password">Repeat Password</label>
-                <input type="password" id="repeat-password" name="repeat-password" class="form-control" />
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-primary btn-block" value="Register">
+                <button type="submit" class="btn btn-primary btn-block" ng-disabled="registerForm.$invalid">Register
+                </button>
             </div>
         </form>
     </div>

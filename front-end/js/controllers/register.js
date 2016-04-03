@@ -2,23 +2,36 @@ angular.module('practicaPHP01.controllers')
     /**
      * Le permite a un usuario crear una nueva contraseña en el sistema.
      */
-    .controller('RegisterController', ['$scope', 'UserService',
-        function ($scope, UserService) {
+    .controller('RegisterController', ['$scope', '$location', 'UserService', 'ClientStorage',
+        function ($scope, $location, UserService, ClientStorage) {
             $scope.init = function() {
-                console.debug('Register');
+                $scope.formMessages = null;
 
-                /**
-                 * TODO: Implementar
-                 * Pasos
-                 * - Permita que el usuario cree una cuenta nueva en el sistema.
-                 * - Agregue las validaciones necesarias: contenido vacio, correo en formato de correo.
-                 * - Provea mensajes de error descriptivos.
-                 * - Maneje los siguientes escenarios:
-                 *  - El correo electrónico no ha sido usado en el sistema y las contraseñas coinciden.
-                 *  - Alguno de los datos está incompleto o en un formato erróneo.
-                 *  - El correo electrónico ya ha sido usado en el sistema.
-                 * - En el primer caso, el caso de éxito, envie el usuario a la ruta de `home`.
-                 */
+                $scope.user = {
+                    email: null,
+                    fullName: null,
+                    password: null,
+                    repeatPassword: null
+                };
+            };
+
+            $scope.register = function register(isValid) {
+                if (isValid) {
+                    UserService.register($scope.user, function(response) {
+                        var data = response.data;
+
+                        if (data.error) {
+                            $scope.formMessages = data.message;
+                        } else {
+                            ClientStorage.put('newUser', true);
+                            $location.url('/');
+                        }
+                    }, function(data) {
+                        $scope.formMessages = data;
+                    });
+                } else {
+                    $scope.formMessages = 'Please fill all the required data.';
+                }
             };
 
             $scope.init();

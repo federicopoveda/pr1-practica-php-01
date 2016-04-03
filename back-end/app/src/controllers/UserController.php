@@ -116,22 +116,20 @@ class UserController {
 //        LOG
 //        error_log(print_r($formData, true), 3, "error.log");
 
-        if (array_key_exists("full-name", $formData)) {
-            $fullName = $formData["full-name"];
-        } else {
-            $result["message"] = "Full name is required";
-        }
-
         if (array_key_exists("email", $formData)) {
             $email = $formData["email"];
+        }
+
+        if (array_key_exists("fullName", $formData)) {
+            $fullName = $formData["fullName"];
         }
 
         if (array_key_exists("password", $formData)) {
             $password = $formData["password"];
         }
 
-        if (array_key_exists("repeat-password", $formData)) {
-            $repeatPassword = $formData["repeat-password"];
+        if (array_key_exists("repeatPassword", $formData)) {
+            $repeatPassword = $formData["repeatPassword"];
         }
 
         $registerResult = $this->userService->register($email, $password, $repeatPassword, $fullName);

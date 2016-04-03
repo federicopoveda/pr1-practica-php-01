@@ -8,6 +8,7 @@
 // Lista de archivos de JavaScript a cargar en la página.
 $scripts = [
     'lib/angular.min.js',
+    'lib/angular-messages.min.js',
     'lib/angular-route.min.js',
     'lib/angular-animate.min.js',
     'app.js',

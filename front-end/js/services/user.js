@@ -61,30 +61,18 @@ angular.module('practicaPHP01.services')
         /**
          * Registra un usuario en el sistema.
          *
-         * @param email
-         * @param password
+         * @param user
+         * @param success
+         * @param error
          *
          */
-        var register = function register(email, password) {
-            var result = {
-                success: false,
-                message: null
-            };
-
-            /**
-             * TODO: Implementar
-             * Pasos
-             * - Asegúrese que tanto el email, el password y la confirmación de password estén definidos.
-             * - Asegúrese que el password y la confirmación de password sean iguales.
-             * - Llame al backend con los datos del formulario (URL: `/back-end/user/register`).
-             * - Basado en la respuesta, maneje los siguientes escenarios:
-             *  - El email no está registrado en el sistema y los contraseñas son válidas.
-             *  - El email no está registrado en el sistema y las contraseñas son inválidas.
-             *  - El email ya está registrado en el sistema.
-             * - Retorne `true` en el primer caso, en caso contrario retorne `false` y un mensaje de error.
-             */
-
-            return result;
+        var register = function register(user, success, error) {
+            return $http.post('back-end/user/register', {
+                email: user.email,
+                fullName: user.fullName,
+                password: user.password,
+                repeatPassword: user.repeatPassword
+            }).then(success, error);
         };
 
         /**
