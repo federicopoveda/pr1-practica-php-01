@@ -11,6 +11,7 @@
 
 namespace App\Controllers;
 
+use App\Services\LoggingService;
 use App\Services\UserService;
 use Slim\Http\Request;
 
@@ -113,8 +114,7 @@ class UserController {
         $password = null;
         $repeatPassword = null;
 
-//        LOG
-//        error_log(print_r($formData, true), 3, "error.log");
+        LoggingService::logVariable($formData, __FILE__, __LINE__);
 
         if (array_key_exists("email", $formData)) {
             $email = $formData["email"];

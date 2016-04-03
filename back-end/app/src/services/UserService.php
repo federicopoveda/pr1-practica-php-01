@@ -43,12 +43,16 @@ class UserService {
                 $params = [":email" => $email];
 
                 // El resultado de de ejecutar la sentencia se almacena en la variable `result`
-                $result = $this->storage->query($query, $params);
+                $loginResult = $this->storage->query($query, $params);
+
+                LoggingService::logVariable($loginResult, __FILE__, __LINE__);
+//                LoggingService::logVariable($loginResult, __FILE__);
+//                LoggingService::logVariable($loginResult);
 
                 // Si la setencia tiene por lo menos una fila, quiere decir que encontramos a nuestro usuario
-                if (count($result["data"]) > 0) {
+                if (count($loginResult["data"]) > 0) {
                     // Almacenamos el usuario en la variable `user`
-                    $user = $result["data"][0];
+                    $user = $loginResult["data"][0];
 
                     // Al usar el mecanismo de hasheo nunca dos hashes serán iguales, por lo que la verificación del
                     // usuario tiene que darse usando esta función.
@@ -130,8 +134,7 @@ class UserService {
                                     // Lo ejecutamos
                                     $createAccountResult = $this->storage->query($query, $params);
 
-//                                    LOG
-//                                    error_log(print_r($createAccountResult, true), 3, "error.log");
+                                    LoggingService::logVariable($createAccountResult);
 
                                     if ($createAccountResult["data"]["count"] == 1) {
                                         $result["message"] = "yay!";
@@ -187,8 +190,7 @@ class UserService {
         // Lo ejecutamos
         $result = $this->storage->query($query, $params);
 
-//        LOG
-//        error_log(print_r($result, true), 3, "error.log");
+        LoggingService::logVariable($result);
 
         // El resultado esperado de la cuenta es cero
         return $result["data"][0]["count"] == 0;
