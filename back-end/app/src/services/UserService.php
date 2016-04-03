@@ -198,14 +198,13 @@ class UserService {
      */
     private function getProtectedPassword($password) {
         /**
-         * Segundo intento: reemplazar caracteres.
-         * Entrada: password
+         * Tercer intento: usar un algoritmo.
          * Salida: q@55w0rd
+         * Salida usando md5: 5f4dcc3b5aa765d61d8327deb882cf99
+         * Problema con md5: http://md5.gromweb.com/?md5=5f4dcc3b5aa765d61d8327deb882cf99
+         * En general el problema es usar algoritmos "rápidos" http://php.net/manual/en/faq.passwords.php#faq.passwords.fasthash
          */
-        $finalPassword = str_replace('a', '@', $password);
-        $finalPassword = str_replace('o', '0', $finalPassword);
-        $finalPassword = str_replace('p', 'q', $finalPassword);
-        $finalPassword = str_replace('s', '5', $finalPassword);
+        $finalPassword = md5($password);
 
         return $finalPassword;
     }
