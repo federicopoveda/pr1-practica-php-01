@@ -1,3 +1,7 @@
+# Binario de composer
 composer.phar
+# Dependencias de composer
 back-end/vendor/
+# Credenciales para la BD
+back-end/bd-credenciales.php
 

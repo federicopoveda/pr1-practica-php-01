@@ -8,6 +8,6 @@ CREATE TABLE usuarios(
   id INT NOT NULL AUTO_INCREMENT,
   email VARCHAR(100) NOT NULL,
   password VARCHAR(255) NOT NULL,
-  full_name VARCHAR(50),
+  full_name VARCHAR(100),
   PRIMARY KEY (id)
 );

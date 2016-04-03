@@ -16,13 +16,8 @@ class StorageService {
     private $pdo;
 
     public function __construct() {
-        // TODO: Permitir que esta información sea distinta por ambiente.
-        $config = [
-            "db_host" => "127.0.0.1",
-            "db_name" => "pr1db",
-            "db_user" => "pr1usuario",
-            "db_pass" => "pr1password"
-        ];
+        // Incluimos el archivo que contiene las credenciales
+        require("bd-credenciales.php");
 
         // Creamos una nueva conexión.
         $this->pdo = new PDO(
