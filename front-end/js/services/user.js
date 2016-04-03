@@ -3,31 +3,30 @@ angular.module('practicaPHP01.services')
      * Encargado de todas las operaciones relacionadas con los usuarios.
      */
     .service('UserService', ['$http', 'ClientStorage', function ($http, ClientStorage) {
+        var UserKey = 'practicaPHP01__userData',
+            NewUserKey = 'practicaPHP01__isNewUser';
+
         /**
+         * Inicia la sesión del usuario en el sistema.
          *
-         * @param email
-         * @param password
+         * @param user objeto con email y password
+         * @param success callback efectuado cuando la operación tiene éxito
+         * @param error callback efectuado con la operación falla
          */
-        var login = function(email, password) {
-            var result = {
-                success: false,
-                message: null
-            };
-
-            /**
-             * TODO: Implementar
-             * Pasos
-             * - Asegúrese que tanto el email y el password estén definidos.
-             * - Llame al backend con los datos del formulario (URL: `/back-end/user/login`).
-             * - Basado en la respuesta, maneje los siguientes escenarios:
-             *  - El email y password son correctos.
-             *  - El email no está registrado.
-             *  - El password es inválido.
-             * - Si el primer escenario ocurre almacene un objeto usando `ClientStorage` que contenga el email y el
-             * nombre del usuario en sesión.
-             */
-
-            return result;
+        var login = function(user, success, error) {
+            return $http.post('back-end/user/login', {
+                email: user.email,
+                password: user.password
+            }).then(function(response) {
+                if (response.data.error) {
+                    error(response.data);
+                } else {
+                    ClientStorage.put(UserKey, response.data.user);
+                    success(response.data);
+                }
+            }, function(response) {
+                error(response.data);
+            });
         };
 
         /**
@@ -61,9 +60,9 @@ angular.module('practicaPHP01.services')
         /**
          * Registra un usuario en el sistema.
          *
-         * @param user
-         * @param success
-         * @param error
+         * @param user objeto con información completa del usuario, email, fullName, password, repeatPassword
+         * @param success callback efectuado cuando la operación tiene éxito
+         * @param error callback efectuado con la operación falla
          *
          */
         var register = function register(user, success, error) {
@@ -72,7 +71,10 @@ angular.module('practicaPHP01.services')
                 fullName: user.fullName,
                 password: user.password,
                 repeatPassword: user.repeatPassword
-            }).then(success, error);
+            }).then(function(response) {
+                setAsNewUser();
+                success(response);
+            }, error);
         };
 
         /**
@@ -81,21 +83,7 @@ angular.module('practicaPHP01.services')
          * @returns {boolean}
          */
         var isLoggedIn = function isLoggedIn() {
-            var result = {
-                success: false,
-                message: null
-            };
-
-            /**
-             * TODO: Implementar
-             * Pasos
-             * - Verifique si existe algún dato en `ClientStorage`.
-             * - Maneje los siguientes escenarios:
-             *  - Si existe algún dato, el usuario tiene sesión activa.
-             *  - No existe ningún dato, el usuario no cuenta con sesión activa.
-             */
-
-            return result;
+            return !!ClientStorage.get(UserKey);
         };
 
         /**
@@ -104,26 +92,35 @@ angular.module('practicaPHP01.services')
          * @returns {{email: string, fullName: string}}|null
          */
         var getCurrentUser = function getCurrentUser() {
-            var user = {
-                email: null,
-                fullName: null
-            };
+            return isLoggedIn() ? ClientStorage.get(UserKey) : null;
+        };
 
-            /**
-             * TODO: Implementar
-             * Pasos
-             * - Verifique que el usuario tenga sesión activa.
-             * - Maneje los siguientes escenarios:
-             *  - El usuario tiene sesión activa, retorne un objeto con el email del usuario.
-             *  - El usuario no tiene sesión activa, retorne `null`.
-             */
+        /**
+         * Marcamos localmente al usuario como `nuevo` en el sistema.
+         */
+        var setAsNewUser = function setAsNewUser() {
+            ClientStorage.put(NewUserKey, {isNew: true});
+        };
 
-            return user;
+        /**
+         * Verifica si el usuario acaba de terminar de registrarse en el sistema.
+         * Después de la primera verificación, se elimina la bandera del usuario como nuevo.
+         *
+         * @returns {boolean}
+         */
+        var isNewUser = function isNewUser() {
+            if (ClientStorage.get(NewUserKey)) {
+                ClientStorage.erase(NewUserKey);
+                return true;
+            }
+
+            return false;
         };
 
         return {
             getCurrentUser: getCurrentUser,
             isLoggedIn: isLoggedIn,
+            isNewUser: isNewUser,
             login: login,
             logout: logout,
             register: register

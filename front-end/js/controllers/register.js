@@ -23,7 +23,6 @@ angular.module('practicaPHP01.controllers')
                         if (data.error) {
                             $scope.formMessages = data.message;
                         } else {
-                            ClientStorage.put('newUser', true);
                             $location.url('/');
                         }
                     }, function(data) {

@@ -2,22 +2,46 @@ angular.module('practicaPHP01.controllers')
     /**
      * Inicia la sesión del usuario en el sistema.
      */
-    .controller('LoginController', ['$scope', 'UserService', '$location',
-        function ($scope, UserService, $location) {
+    .controller('LoginController', ['$scope', '$location', 'UserService',
+        function ($scope, $location, UserService) {
             $scope.init = function() {
-                console.debug('Login');
+                $scope.formMessages = null;
 
-                /**
-                 * TODO: Implementar
-                 * Pasos
-                 * - Verifique si el usuario tiene una sesión activa.
-                 * - Maneje los siguientes escenarios:
-                 *  - El usuario tiene una sesión activa, envie el usuario a la ruta de `home`.
-                 *  - No tiene una sesión activa, permita que la pagina de inicio de sesión funcione normalmente.
-                 * - En el segundo caso, permítale al usuario iniciar una sesión en el sistema.
-                 * - Agregue las validaciones necesarias: contenido vacio, correo en formato de correo.
-                 * - Provea mensajes de error descriptivos.
-                 */
+                $scope.user = {
+                    email: null,
+                    password: null
+                };
+
+                // Si el usuario ya tiene sesión activa
+                if (UserService.isLoggedIn()) {
+                    // console.debug('sesión activa');
+                    $location.url('home');
+                } else {
+                    // Si el usuario acaba de registrarse
+                    if (UserService.isNewUser()) {
+                        $scope.formMessages = 'Bienvenido nuevo usuario';
+                        console.debug('nuevo usuario');
+                    }
+                }
+            };
+
+            $scope.login = function login(isValid) {
+                if (isValid) {
+                    UserService.login($scope.user, function(data) {
+                        if (data.error) {
+                            // console.warn(data.message);
+                            $scope.formMessages = data.message;
+                        } else {
+                            $location.url('home');
+                            // console.info(data.message);
+                        }
+                    }, function(data) {
+                        // console.warn(data.message);
+                        $scope.formMessages = data.message;
+                    });
+                } else {
+                    $scope.formMessages = 'Please fill all the required data.';
+                }
             };
 
             $scope.init();

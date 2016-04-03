@@ -10,7 +10,7 @@
             - https://scotch.io/tutorials/angularjs-form-validation-with-ngmessages
         -->
         <form novalidate autocomplete="off" name="registerForm" ng-submit="register(registerForm.$valid)">
-            <p class="alert alert-warning">{{formMessages}}</p>
+            <p class="alert alert-warning" ng-if="formMessages">{{formMessages}}</p>
             <div class="form-group"
                  ng-class="{'has-error': registerForm.fullName.$touched && registerForm.fullName.$invalid}">
                 <label for="fullName">Name</label>

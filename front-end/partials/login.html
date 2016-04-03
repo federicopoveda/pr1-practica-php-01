@@ -4,17 +4,29 @@
 </div>
 <div class="panel panel-default">
     <div class="panel-body">
-        <form novalidate autocomplete="off" name="login">
-            <div class="form-group">
+        <form novalidate autocomplete="off" name="loginForm" ng-submit="login(loginForm.$valid)">
+            <p class="alert alert-warning" ng-if="formMessages">{{formMessages}}</p>
+            <div class="form-group"
+                 ng-class="{'has-error': loginForm.email.$touched && loginForm.email.$invalid}">
                 <label for="email">Email</label>
-                <input type="text" placeholder="email" id="email" name="email" class="form-control" />
+                <input type="email" placeholder="email" id="email" name="email" class="form-control"
+                       ng-model="user.email" required/>
+                <div ng-messages="loginForm.email.$error" ng-if="loginForm.email.$touched">
+                    <p ng-message="email" class="alert alert-danger">Please provide your email using a valid format.</p>
+                    <p ng-message="required" class="alert alert-danger">Your email is required.</p>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="form-group"
+                 ng-class="{'has-error': loginForm.password.$touched && loginForm.password.$invalid}">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" />
+                <input type="password" id="password" name="password" class="form-control" ng-model="user.password"
+                       required />
+                <div ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
+                    <p ng-message="required" class="alert alert-danger">Password is required.</p>
+                </div>
             </div>
             <div class="form-group">
-                <input type="submit" class="btn btn-primary btn-block" value="Login">
+                <button type="submit" class="btn btn-primary btn-block" ng-disabled="loginForm.$invalid">Login</button>
             </div>
         </form>
     </div>
