@@ -34,34 +34,38 @@ class UserService {
         if ($this->validation->isValidEmail($email)) {
             // Verificamos que el password, sin espacios, tenga por lo menos 1 caracter
             if ($this->validation->isValidString($password)) {
-                // Si todo lo anterior tuvo éxito, iniciamos el query
+                // Si lo anterior tuvo éxito, iniciamos el query
 
                 // El query que vamos a ejecutar en la BD
-                $query = "SELECT id, email, full_name FROM usuarios WHERE email = :email AND password = :password LIMIT 1";
-
-                // Encriptamos el password
-                $encryptedPassword = $this->getProtectedPassword($password);
+                $query = "SELECT id, email, password, full_name FROM usuarios WHERE email = :email LIMIT 1";
 
                 // Los parámetros de ese query
-                $params = [":email" => $email, ":password" => $encryptedPassword];
+                $params = [":email" => $email];
 
                 // El resultado de de ejecutar la sentencia se almacena en la variable `result`
                 $result = $this->storage->query($query, $params);
 
                 // Si la setencia tiene por lo menos una fila, quiere decir que encontramos a nuestro usuario
-                if (count($result['data']) > 0) {
+                if (count($result["data"]) > 0) {
                     // Almacenamos el usuario en la variable `user`
-                    $user = $result['data'][0];
+                    $user = $result["data"][0];
 
-                    // Definimos nuestro mensaje de éxito
-                    $result["message"] = "User found.";
+                    // Al usar el mecanismo de hasheo nunca dos hashes serán iguales, por lo que la verificación del
+                    // usuario tiene que darse usando esta función.
+                    if (password_verify($password, $user["password"])) {
+                        // Definimos nuestro mensaje de éxito
+                        $result["message"] = "User found.";
 
-                    // Enviamos de vuelta a quien consumió el servicio datos sobre el usuario solicitado
-                    $result["user"] = [
-                        "id" => $user["id"],
-                        "email" => $user["email"],
-                        "fullName" => $user["full_name"]
-                    ];
+                        // Enviamos de vuelta a quien consumió el servicio datos sobre el usuario solicitado
+                        $result["user"] = [
+                            "id" => $user["id"],
+                            "email" => $user["email"],
+                            "fullName" => $user["full_name"]
+                        ];
+                    } else {
+                        $result["message"] = "Invalid password.";
+                        $result["error"] = true;
+                    }
                 } else {
                     // No encontramos un usuario con ese email y password
                     $result["message"] = "Invalid credentials.";
@@ -117,7 +121,7 @@ class UserService {
 
                                     $query = "INSERT INTO usuarios (email, password, full_name) VALUES (:email, :password, :nombre)";
 
-                                    // Encriptamos el password
+                                    // Enmascaramos la contraseña
                                     $encryptedPassword = $this->getProtectedPassword($password);
 
                                     // Los parámetros de ese query
@@ -198,13 +202,16 @@ class UserService {
      */
     private function getProtectedPassword($password) {
         /**
-         * Tercer intento: usar un algoritmo.
-         * Salida: q@55w0rd
-         * Salida usando md5: 5f4dcc3b5aa765d61d8327deb882cf99
-         * Problema con md5: http://md5.gromweb.com/?md5=5f4dcc3b5aa765d61d8327deb882cf99
-         * En general el problema es usar algoritmos "rápidos" http://php.net/manual/en/faq.passwords.php#faq.passwords.fasthash
+         * Cuarto intento: usando funciones nativas de PHP para `hashear` contraseñas.
+         * Entrada: password
+         * Salida usando bcrypt: $2y$10$2vCcgaflnKMeUc3D4wo1l.efzpviKiqUKZXSv0esbWdcHXyriyici
+         * Salida usando bcrypt: $2y$10$mI.DvksSYz46dsqC28Ju2.FXD00dhqCtFsgVMCrnRfFprEurg.m2q
+         * https://jonsuh.com/blog/securely-hash-passwords-with-php/
+         * http://stackoverflow.com/questions/18084595/how-to-decrypt-hash-stored-by-bcrypt
+         * Al bcrypt ser un algoritmo de hasheo, no tiene contraparte para revertirlo, además se le agrega una sal
+         * aleatoriamente y finalmente es computacionalmente costoso.
          */
-        $finalPassword = md5($password);
+        $finalPassword = password_hash($password, PASSWORD_BCRYPT);
 
         return $finalPassword;
     }
